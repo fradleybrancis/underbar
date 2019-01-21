@@ -52,11 +52,11 @@
   _.each = function(collection, iterator) {
     if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length - 1; i++) {
-        iterator(collection[i], i);
+        iterator(collection[i], i, collection);
       }
     } else {
       for (var i in collection) {
-        iterator(collection[i], i);
+        iterator(collection[i], i, collection);
       }
     }
   };

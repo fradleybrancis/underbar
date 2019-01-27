@@ -198,26 +198,32 @@
   };
 
 
-  // Determine whether all of the elements match a truth test. [1, 2, 3, 4] x < 5
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
-    if (arguments.length === 2) {
-      return _.reduce(collection, function(passes, item) {
+  
+    iterator = iterator || _.identity;
+
+      return _.reduce(collection, function(passes, item) {        
         if (iterator(item) == true && passes == true) {
           return true; 
+        } else if (item == undefined) { 
+          return false;
+        } else if (typeof (item) === 'object' && Object.keys(item).length === 0)  {
+          return true;
         }
         return false;
-      }, true)
-    }
-    return _.reduce(collection, function(memo, item) {
-      return memo == true && item == true ? true: false
-    }, true)
+      }, true);
   };
 
-  // Determine whether any of the elements pass a truth test. If no iterator is
-  // provided, provide a default one
   _.some = function(collection, iterator) {
-    // TIP: There's a very clever way to re-use every() here.
+
+    iterator = iterator || _.identity;
+
+    return _.reduce(collection, function(memo, item) {
+      if (iterator(item) == true || memo == true || typeof(iterator(item)) === 'string') {
+        return true;
+      }
+      return false;
+    }, false);
   };
 
 
@@ -240,11 +246,19 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    for (var i = 1; i < arguments.length; i++) {
+      for (var k in arguments[i]) {
+        obj[k] = arguments[i][k];
+      }
+    }
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    
+
   };
 
 

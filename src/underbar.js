@@ -100,23 +100,25 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    if (!(isSorted)) {
+    if (isSorted) {  
+      var spot = [];  
+      _.each(array, function(item) {
+        var changed = iterator(item)
+        if (_.indexOf(spot, changed) === -1) {
+          spot.push(changed)
+        }
+      })
+      return spot;
+    } else {
       var sorted = [];
-    
       _.each(array, function(item) {
         if (_.indexOf(sorted, item) === -1) {
-          sorted.push(item)
+          sorted.push(item);
         }
       })
       return sorted;
     }
-    var altered = [];
-    _.each(array, function(item) {
-      altered.push(iterator(item))
-    })
-    return altered;
   };
-
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
@@ -169,14 +171,18 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-
-    _.each(collection, function(item) {
-      if (accumulator === undefined) {
-        accumulator = item
-      } 
-      accumulator = iterator(accumulator, item)
-    })
+    if (arguments.length < 3) {
+      accumulator = collection[0];
+      _.each(collection.slice(1), function(item) { 
+        accumulator = iterator(accumulator, item) })
+      
+      return accumulator;
+    }
+    _.each(collection, function(item) { 
+      accumulator = iterator(accumulator, item) })
+    
     return accumulator;
+
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -192,9 +198,20 @@
   };
 
 
-  // Determine whether all of the elements match a truth test.
+  // Determine whether all of the elements match a truth test. [1, 2, 3, 4] x < 5
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    if (arguments.length === 2) {
+      return _.reduce(collection, function(passes, item) {
+        if (iterator(item) == true && passes == true) {
+          return true; 
+        }
+        return false;
+      }, true)
+    }
+    return _.reduce(collection, function(memo, item) {
+      return memo == true && item == true ? true: false
+    }, true)
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is

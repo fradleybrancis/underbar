@@ -100,24 +100,37 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    if (isSorted) {  
-      var spot = [];  
+
+    iterator = iterator || _.identity;
+
+    let i = 1;
+    let bar = array[0];
+    isSorted = true;
+    while (isSorted === true && i < array.length) {
+      if (array[i] >= bar) {
+        bar = array[i];
+      } else {
+        isSorted = false;
+      }
+      i++
+    };
+
+    var sorted = [];
+    if (isSorted) {   
       _.each(array, function(item) {
-        var changed = iterator(item)
-        if (_.indexOf(spot, changed) === -1) {
-          spot.push(changed)
-        }
-      })
-      return spot;
-    } else {
-      var sorted = [];
-      _.each(array, function(item) {
-        if (_.indexOf(sorted, item) === -1) {
-          sorted.push(item);
+        if (_.indexOf(sorted, iterator(item)) === -1) {
+          sorted.push(iterator(item));
         }
       })
       return sorted;
-    }
+    } else {
+      _.each(array, function(item) {
+        if (_.indexOf(sorted, item) === -1) {
+          sorted.push(item);
+        };
+      })
+      return sorted;
+    };
   };
 
   // Return the results of applying an iterator to each element.
